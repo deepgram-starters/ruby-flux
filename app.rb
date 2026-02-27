@@ -193,10 +193,13 @@ class WebSocketMiddleware
       end
 
       # Forward to client (preserve binary vs text framing)
-      if event.data.is_a?(Array)
-        client_ws.send(event.data) if client_ws
+      data = event.data
+      if data.is_a?(Array)
+        client_ws.send(data) if client_ws
+      elsif data.is_a?(String) && data.encoding == Encoding::ASCII_8BIT
+        client_ws.send(data.bytes) if client_ws
       else
-        client_ws.send(event.data) if client_ws
+        client_ws.send(data) if client_ws
       end
     end
 
@@ -220,7 +223,14 @@ class WebSocketMiddleware
       end
 
       # Forward binary audio or JSON text to Deepgram
-      deepgram_ws&.send(event.data)
+      data = event.data
+      if data.is_a?(Array)
+        deepgram_ws&.send(data)
+      elsif data.is_a?(String) && data.encoding == Encoding::ASCII_8BIT
+        deepgram_ws&.send(data.bytes)
+      else
+        deepgram_ws&.send(data)
+      end
     end
 
     client_ws.on :close do |event|
