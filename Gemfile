@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra', '4.1.1'
+gem 'sinatra', '4.2.0'
 gem 'sinatra-cross_origin', '0.4.0'
 gem 'puma', '7.2.1'
 gem 'jwt', '2.10.3'
